@@ -86,4 +86,74 @@ describe('JDLLexer', () => {
       );
     });
   });
+
+  context('when passing a JDL with acceptableValues defined for fields', () => {
+    let lexingResult = null;
+
+    before(() => {
+      const input = `
+   entity JobHistory {
+     names String acceptableValues(["Person", "First Last"]),
+     decimalNumbers Double acceptableValues([-0.02, 0.05, 1.5]) required,
+     integerNumbers Integer acceptableValues([-1,2,42]),
+   }`;
+      lexingResult = JDLLexer.tokenize(input);
+    });
+
+    it('does not fail', () => {
+      expect(lexingResult.errors).to.be.empty;
+    });
+
+    it('acceptableValues', () => {
+      const tokens = lexingResult.tokens;
+      // entity
+      expect(tokens.length).to.equal(42);
+      expect(tokens[0].image).to.equal('entity');
+      expect(tokens[1].image).to.equal('JobHistory');
+      expect(tokens[2].image).to.equal('{');
+      // names field
+      expect(tokens[3].image).to.equal('names');
+      expect(tokens[4].image).to.equal('String');
+      expect(tokens[5].image).to.equal('acceptableValues');
+      expect(tokens[6].image).to.equal('(');
+      expect(tokens[7].image).to.equal('[');
+      expect(tokens[8].image).to.equal('"Person"');
+      expect(tokens[9].image).to.equal(',');
+      expect(tokens[10].image).to.equal('"First Last"');
+      expect(tokens[11].image).to.equal(']');
+      expect(tokens[12].image).to.equal(')');
+      expect(tokens[13].image).to.equal(',');
+      // doubleNumbers field
+      expect(tokens[14].image).to.equal('decimalNumbers');
+      expect(tokens[15].image).to.equal('Double');
+      expect(tokens[16].image).to.equal('acceptableValues');
+      expect(tokens[17].image).to.equal('(');
+      expect(tokens[18].image).to.equal('[');
+      expect(tokens[19].image).to.equal('-0.02');
+      expect(tokens[20].image).to.equal(',');
+      expect(tokens[21].image).to.equal('0.05');
+      expect(tokens[22].image).to.equal(',');
+      expect(tokens[23].image).to.equal('1.5');
+      expect(tokens[24].image).to.equal(']');
+      expect(tokens[25].image).to.equal(')');
+      expect(tokens[26].image).to.equal('required');
+      expect(tokens[27].image).to.equal(',');
+      // integerNumbers field
+      expect(tokens[28].image).to.equal('integerNumbers');
+      expect(tokens[29].image).to.equal('Integer');
+      expect(tokens[30].image).to.equal('acceptableValues');
+      expect(tokens[31].image).to.equal('(');
+      expect(tokens[32].image).to.equal('[');
+      expect(tokens[33].image).to.equal('-1');
+      expect(tokens[34].image).to.equal(',');
+      expect(tokens[35].image).to.equal('2');
+      expect(tokens[36].image).to.equal(',');
+      expect(tokens[37].image).to.equal('42');
+      expect(tokens[38].image).to.equal(']');
+      expect(tokens[39].image).to.equal(')');
+      expect(tokens[40].image).to.equal(',');
+      // close
+      expect(tokens[41].image).to.equal('}');
+    });
+  });
 });
