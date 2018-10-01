@@ -848,5 +848,57 @@ describe('EntityParser', () => {
         }).to.throw("No valable field type could be resolved for field 'toto' of entity 'A', got 'DoesNotExistAtAll'");
       });
     });
+    context('when passing a JDL object with an acceptableValues validation type', () => {
+      let content = null;
+      let jdlObject = null;
+
+      before(() => {
+        const entityA = new JDLEntity({
+          name: 'EntityA',
+          tableName: 'a',
+          fields: {
+            aa: new JDLField({
+              name: 'aa',
+              type: FieldTypes.CommonDBTypes.INTEGER,
+              validations: {
+                acceptableValues: new JDLValidation({ name: Validations.ACCEPTABLE_VALUES, value: [0, 1, 2] })
+              }
+            }),
+            ab: new JDLField({
+              name: 'ab',
+              type: FieldTypes.CommonDBTypes.STRING,
+              validations: {
+                acceptableValues: new JDLValidation({ name: Validations.ACCEPTABLE_VALUES, value: ['a', 'b', 'c'] })
+              }
+            })
+          }
+        });
+        jdlObject = new JDLObject();
+        jdlObject.addEntity(entityA);
+      });
+
+      it('converts it', () => {
+        content = EntityParser.parse({
+          jdlObject,
+          databaseType: DatabaseTypes.MYSQL
+        });
+        expect(content.EntityA.fields).to.deep.eq([
+          {
+            fieldName: 'aa',
+            fieldType: FieldTypes.CommonDBTypes.INTEGER,
+            fieldValidateRules: ['acceptableValues'],
+            fieldValidateRulesAcceptableValues: [0, 1, 2],
+            fieldValues: '0,1,2'
+          },
+          {
+            fieldName: 'ab',
+            fieldType: FieldTypes.CommonDBTypes.STRING,
+            fieldValidateRules: ['acceptableValues'],
+            fieldValidateRulesAcceptableValues: ['a', 'b', 'c'],
+            fieldValues: 'a,b,c'
+          }
+        ]);
+      });
+    });
   });
 });

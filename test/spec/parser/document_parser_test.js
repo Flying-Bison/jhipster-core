@@ -870,6 +870,114 @@ describe('DocumentParser', () => {
           expect(jdlObject.getEntity('Alumni').fields.firstName.validations.pattern.value.includes("\\'")).be.true;
         });
       });
+      context('when having an acceptable values validation', () => {
+        context('for valid jdl', () => {
+          let jdlObject = null;
+          before(() => {
+            const input = JDLReader.parseFromFiles([
+              './test/test_files/acceptable_values/acceptable_values_validation.jdl'
+            ]);
+            jdlObject = DocumentParser.parseFromConfigurationObject({
+              document: input,
+              applicationType: ApplicationTypes.MONOLITH
+            });
+          });
+
+          it('builds a JDLObject', () => {
+            expect(jdlObject).not.to.be.null;
+            expect(jdlObject.entities.Sample).to.deep.eq(
+              new JDLEntity({
+                name: 'Sample',
+                tableName: 'Sample',
+                fields: {
+                  names: new JDLField({
+                    name: 'names',
+                    type: FieldTypes.STRING,
+                    validations: {
+                      acceptableValues: new JDLValidation({
+                        name: Validations.ACCEPTABLE_VALUES,
+                        value: ['Person', 'First Last']
+                      })
+                    }
+                  }),
+                  decimalNumbers: new JDLField({
+                    name: 'decimalNumbers',
+                    type: FieldTypes.DOUBLE,
+                    validations: {
+                      acceptableValues: new JDLValidation({
+                        name: Validations.ACCEPTABLE_VALUES,
+                        value: [-0.02, 0.05, 1.5]
+                      }),
+                      required: new JDLValidation({ name: Validations.REQUIRED })
+                    }
+                  }),
+                  integerNumbers: new JDLField({
+                    name: 'integerNumbers',
+                    type: FieldTypes.INTEGER,
+                    validations: {
+                      acceptableValues: new JDLValidation({ name: Validations.ACCEPTABLE_VALUES, value: [-1, 2, 42] })
+                    }
+                  }),
+                  floatNumbers: new JDLField({
+                    name: 'floatNumbers',
+                    type: FieldTypes.FLOAT,
+                    validations: {
+                      acceptableValues: new JDLValidation({
+                        name: Validations.ACCEPTABLE_VALUES,
+                        value: [-0.02, 0.05, 1.5]
+                      })
+                    }
+                  })
+                }
+              })
+            );
+          });
+        });
+        context('for invalid jdl', () => {
+          it('fails for Integer in String field', () => {
+            expect(() => {
+              const input = JDLReader.parseFromFiles([
+                './test/test_files/acceptable_values/acceptable_values_validation_invalid_1.jdl'
+              ]);
+              DocumentParser.parseFromConfigurationObject({
+                document: input,
+                applicationType: ApplicationTypes.MONOLITH
+              });
+            }).to.throw(
+              "The passed validation 'acceptableValues' must be valid to be added to the field.\n" +
+                'Errors: Acceptable Values Validation expected entries of type: String but found invalid entries: [0] in [Person,First Last,0]'
+            );
+          });
+          it('fails for String in Double field', () => {
+            expect(() => {
+              const input = JDLReader.parseFromFiles([
+                './test/test_files/acceptable_values/acceptable_values_validation_invalid_2.jdl'
+              ]);
+              DocumentParser.parseFromConfigurationObject({
+                document: input,
+                applicationType: ApplicationTypes.MONOLITH
+              });
+            }).to.throw(
+              "The passed validation 'acceptableValues' must be valid to be added to the field.\n" +
+                'Errors: Acceptable Values Validation expected entries of type: Double but found invalid entries: [bad value] in [-0.02,bad value,1.5]'
+            );
+          });
+          it('fails for Decimal in an Integer field', () => {
+            expect(() => {
+              const input = JDLReader.parseFromFiles([
+                './test/test_files/acceptable_values/acceptable_values_validation_invalid_3.jdl'
+              ]);
+              DocumentParser.parseFromConfigurationObject({
+                document: input,
+                applicationType: ApplicationTypes.MONOLITH
+              });
+            }).to.throw(
+              "The passed validation 'acceptableValues' must be valid to be added to the field.\n" +
+                'Errors: Acceptable Values Validation expected entries of type: Integer but found invalid entries: [2.1] in [-1,2.1,42]'
+            );
+          });
+        });
+      });
     });
   });
 });

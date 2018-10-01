@@ -92,7 +92,7 @@ describe('JDLLexer', () => {
 
     before(() => {
       const input = `
-   entity JobHistory {
+   entity Sample {
      names String acceptableValues(["Person", "First Last"]),
      decimalNumbers Double acceptableValues([-0.02, 0.05, 1.5]) required,
      integerNumbers Integer acceptableValues([-1,2,42]),
@@ -109,7 +109,7 @@ describe('JDLLexer', () => {
       // entity
       expect(tokens.length).to.equal(42);
       expect(tokens[0].image).to.equal('entity');
-      expect(tokens[1].image).to.equal('JobHistory');
+      expect(tokens[1].image).to.equal('Sample');
       expect(tokens[2].image).to.equal('{');
       // names field
       expect(tokens[3].image).to.equal('names');

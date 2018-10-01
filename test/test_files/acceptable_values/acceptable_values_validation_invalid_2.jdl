@@ -1,0 +1,6 @@
+entity Sample {
+     names String acceptableValues(["Person", "First Last"]),
+     decimalNumbers Double acceptableValues([-0.02, "bad value", 1.5]) required,
+     integerNumbers Integer acceptableValues([-1,2,42]),
+     floatNumbers Float acceptableValues([-0.02, 0.05, 1.5])
+}

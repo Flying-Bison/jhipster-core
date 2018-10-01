@@ -147,5 +147,54 @@ describe('FieldTypes', () => {
         expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.BIG_DECIMAL, Validations.MIN)).to.be.true;
       });
     });
+    context('when passing acceptableValues', () => {
+      context('for valid CommonDBTypes FieldTypes', () => {
+        it('returns true', () => {
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.STRING, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.INTEGER, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.FLOAT, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.DOUBLE, Validations.ACCEPTABLE_VALUES)).to.be.true;
+        });
+        it('returns true', () => {
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.STRING, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.INTEGER, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.FLOAT, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.DOUBLE, Validations.ACCEPTABLE_VALUES)).to.be.true;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.INTEGER, Validations.ACCEPTABLE_VALUES)).to.be.true;
+        });
+      });
+      context('for invalid CommonDBTypes FieldTypes', () => {
+        it('returns false', () => {
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.BIG_DECIMAL, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.LONG, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.ENUM, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.BOOLEAN, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.LOCAL_DATE, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.ZONED_DATE_TIME, Validations.ACCEPTABLE_VALUES)).to
+            .be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.BLOB, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.ANY_BLOB, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.IMAGE_BLOB, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.TEXT_BLOB, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CommonDBTypes.INSTANT, Validations.ACCEPTABLE_VALUES)).to.be.false;
+        });
+        it('returns false', () => {
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.BIG_DECIMAL, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.LONG, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.BOOLEAN, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.DATE, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.UUID, Validations.ACCEPTABLE_VALUES)).to.be.false;
+          expect(FieldTypes.hasValidation(FieldTypes.CassandraTypes.INSTANT, Validations.ACCEPTABLE_VALUES)).to.be
+            .false;
+        });
+      });
+    });
   });
 });
